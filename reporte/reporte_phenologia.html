@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Francisco Zambrano">
+
+<title>Análisis de Fenología con Imágenes HLSS30</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="reporte_phenologia_files/libs/clipboard/clipboard.min.js"></script>
+<script src="reporte_phenologia_files/libs/quarto-html/quarto.js"></script>
+<script src="reporte_phenologia_files/libs/quarto-html/popper.min.js"></script>
+<script src="reporte_phenologia_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="reporte_phenologia_files/libs/quarto-html/anchor.min.js"></script>
+<link href="reporte_phenologia_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="reporte_phenologia_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="reporte_phenologia_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="reporte_phenologia_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="reporte_phenologia_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="reporte_phenologia_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="reporte_phenologia_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="reporte_phenologia_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="reporte_phenologia_files/libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="reporte_phenologia_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="reporte_phenologia_files/libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="reporte_phenologia_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="reporte_phenologia_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="reporte_phenologia_files/libs/leaflet-binding-2.2.1/leaflet.js"></script>
+<script src="reporte_phenologia_files/libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="reporte_phenologia_files/libs/leaflet-providers-plugin-2.2.1/leaflet-providers-plugin.js"></script>
+<script src="reporte_phenologia_files/libs/core-js-2.5.3/shim.min.js"></script>
+<script src="reporte_phenologia_files/libs/react-18.2.0/react.min.js"></script>
+<script src="reporte_phenologia_files/libs/react-18.2.0/react-dom.min.js"></script>
+<script src="reporte_phenologia_files/libs/reactwidget-1.0.0/react-tools.js"></script>
+<link href="reporte_phenologia_files/libs/reactable-0.4.4/reactable.css" rel="stylesheet">
+<script src="reporte_phenologia_files/libs/reactable-binding-0.4.4/reactable.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#área-de-estudio" id="toc-área-de-estudio" class="nav-link active" data-scroll-target="#área-de-estudio"><span class="header-section-number">1</span> Área de Estudio</a></li>
+  <li><a href="#datos" id="toc-datos" class="nav-link" data-scroll-target="#datos"><span class="header-section-number">2</span> Datos</a></li>
+  <li><a href="#análisis-con-datos-hlss30" id="toc-análisis-con-datos-hlss30" class="nav-link" data-scroll-target="#análisis-con-datos-hlss30"><span class="header-section-number">3</span> Análisis con datos HLSS30</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis de Fenología con Imágenes HLSS30</h1>
+<p class="subtitle lead">Comparación entre índices NDVI y kNDVI</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Francisco Zambrano </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">28 de febrero de 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="área-de-estudio" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="área-de-estudio"><span class="header-section-number">1</span> Área de Estudio</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-a05da2e52c65f90fee1c" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a05da2e52c65f90fee1c">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"createMapPane","args":["tmap401",401]},{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"Imagery",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"pane":"tilePane"}]},{"method":"addPolygons","args":[[[[{"lng":[-71.27568613464116,-71.27409477463684,-71.27408320110953,-71.27333092183476,-71.27306473070676,-71.27276381899685,-71.27253813521442,-71.27229509114103,-71.2720578338313,-71.27169326772122,-71.27427416431004,-71.27568613464116],"lat":[-34.3284697251764,-34.32630547557051,-34.32631704909782,-34.32666425491695,-34.32679156371729,-34.32687836517207,-34.32690151222668,-34.32691887251764,-34.32690729899033,-34.32716770335468,-34.32918728386926,-34.3284697251764]}]]],"X1","sitio",{"interactive":false,"className":"","pane":"tmap401","stroke":true,"color":"#FFFFFF","weight":1,"opacity":1,"fill":true,"fillOpacity":0,"dashArray":"none","smoothFactor":1,"noClip":false},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLayersControl","args":["Imagery","sitio",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]}],"limits":{"lat":[-34.32918728386926,-34.32630547557051],"lng":[-71.27568613464116,-71.27169326772122]},"fitBounds":[-34.32918728386926,-71.27568613464116,-34.32630547557051,-71.27169326772122,[]]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="datos" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="datos"><span class="header-section-number">2</span> Datos</h2>
+<p>Se utilizaron datos de HLS Sentinel-2 MSI Surface Reflectance Daily Global 30 m, nombre corto <code>HLSS30</code>. Enttre julio 2022 y junio 2023.</p>
+</section>
+<section id="análisis-con-datos-hlss30" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="análisis-con-datos-hlss30"><span class="header-section-number">3</span> Análisis con datos HLSS30</h2>
+<p>Mapas de los índices NDVI y kNDVI agregados a escala mensual para la temporada 2022-2023.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="../output/mapa_ndvi_la_esperanza.png" class="img-fluid" style="width:100.0%"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="../output/mapa_kndvi_la_esperanza.png" class="img-fluid" style="width:100.0%"></p>
+</div>
+</div>
+<p>Determinación de métricas de fenología.</p>
+<p>La métricas utilizadas corresponden a las siguientes:</p>
+<ul>
+<li><code>sos:</code> start of season</li>
+<li><code>eos:</code> end of season</li>
+<li><code>los:</code> length of season</li>
+<li><code>pop:</code> position of peak value (maximum)</li>
+<li><code>mgs:</code> mean growing season value</li>
+<li><code>peak:</code> peak value (maximum)</li>
+<li><code>msp:</code> mean spring value</li>
+<li><code>mau:</code> mean autumn value</li>
+<li><code>rsp:</code> rate of spring greenup (not all methods)</li>
+<li><code>rau:</code> rate of autumn senescence rates (not all methods)</li>
+</ul>
+<p>Con índice NDVI</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="../output/phenology_la_esperanza_NDVI.png" class="img-fluid" width="1800"></p>
+</div>
+</div>
+<p>Con índice kNDVI</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="../output/phenology_la_esperanza_kNDVI.png" class="img-fluid" width="1800"></p>
+</div>
+</div>
+<p>Tabla con valores de métricas obtenidas de la fenología con los dos índices.</p>
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="acfmfzpofg" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#acfmfzpofg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#acfmfzpofg thead, #acfmfzpofg tbody, #acfmfzpofg tfoot, #acfmfzpofg tr, #acfmfzpofg td, #acfmfzpofg th {
+  border-style: none;
+}
+
+#acfmfzpofg p {
+  margin: 0;
+  padding: 0;
+}
+
+#acfmfzpofg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#acfmfzpofg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#acfmfzpofg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#acfmfzpofg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#acfmfzpofg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#acfmfzpofg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#acfmfzpofg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#acfmfzpofg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#acfmfzpofg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#acfmfzpofg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#acfmfzpofg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#acfmfzpofg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#acfmfzpofg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#acfmfzpofg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#acfmfzpofg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#acfmfzpofg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#acfmfzpofg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#acfmfzpofg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#acfmfzpofg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#acfmfzpofg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#acfmfzpofg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#acfmfzpofg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#acfmfzpofg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#acfmfzpofg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#acfmfzpofg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#acfmfzpofg .gt_left {
+  text-align: left;
+}
+
+#acfmfzpofg .gt_center {
+  text-align: center;
+}
+
+#acfmfzpofg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#acfmfzpofg .gt_font_normal {
+  font-weight: normal;
+}
+
+#acfmfzpofg .gt_font_bold {
+  font-weight: bold;
+}
+
+#acfmfzpofg .gt_font_italic {
+  font-style: italic;
+}
+
+#acfmfzpofg .gt_super {
+  font-size: 65%;
+}
+
+#acfmfzpofg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#acfmfzpofg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#acfmfzpofg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#acfmfzpofg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#acfmfzpofg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#acfmfzpofg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#acfmfzpofg .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<div id="acfmfzpofg" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="acfmfzpofg">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"id":["La Esperanza","La Esperanza","La Esperanza","La Esperanza","La Esperanza"],"index":["NDVI","kNDVI","kNDVI","kNDVI","kNDVI"],"year":["2023","2022","2022","2023","2023"],"cycle":["1","1","2","1","2"],"begin":["2022-07-29","2022-07-13","2022-08-15","2022-10-07","2023-05-26"],"end":["2023-05-26","2022-08-14","2022-10-06","2023-05-25","2023-06-13"],"maxval":["2023-02-07","2022-07-30","2022-09-27","2023-01-13","2023-06-06"],"weight":[257.50255881292,8.4950106719936,19.5234924254447,162.926539646194,2.11267111024679],"sos":["2022-09-10","2022-07-22","2022-09-21","2022-10-14","2023-06-02"],"eos":["2023-05-10","2022-08-09","2022-10-05","2023-03-30","2023-06-10"],"los":[242,18,14,167,8],"pop":["2023-01-20","2022-07-29","2022-09-27","2022-12-22","2023-06-06"],"mgs":[0.573202149973805,0.124272744310287,0.231284654075371,0.350288968240106,0.0678669103382034],"rsp":["NA","NA","NA","NA","NA"],"rau":["NA","NA","NA","NA","NA"],"peak":[0.612168911003888,0.14253076882245,0.262546762231734,0.418970717579483,0.0859978189073437],"msp":[0.428105367684773,0.0933961718535963,0.178773189606444,0.240673987015502,0.0325540687335737],"mau":[0.423816900489061,0.109688062132695,0.233331022448808,0.231479453357192,0.0492342761064688]},"columns":[{"id":"id","name":"id","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["La Esperanza","La Esperanza","La Esperanza","La Esperanza","La Esperanza"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"index","name":"index","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["NDVI","kNDVI","kNDVI","kNDVI","kNDVI"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"year","name":"year","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2023","2022","2022","2023","2023"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"cycle","name":"cycle","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["1","1","2","1","2"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"begin","name":"begin","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2022-07-29","2022-07-13","2022-08-15","2022-10-07","2023-05-26"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"end","name":"end","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2023-05-26","2022-08-14","2022-10-06","2023-05-25","2023-06-13"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"maxval","name":"maxval","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2023-02-07","2022-07-30","2022-09-27","2023-01-13","2023-06-06"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"weight","name":"weight","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["257.502559","8.495011","19.523492","162.926540","2.112671"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"sos","name":"sos","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2022-09-10","2022-07-22","2022-09-21","2022-10-14","2023-06-02"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"eos","name":"eos","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2023-05-10","2022-08-09","2022-10-05","2023-03-30","2023-06-10"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"los","name":"los","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["242","18","14","167","8"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"pop","name":"pop","type":"Date","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["2023-01-20","2022-07-29","2022-09-27","2022-12-22","2023-06-06"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"mgs","name":"mgs","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["0.57320215","0.12427274","0.23128465","0.35028897","0.06786691"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"rsp","name":"rsp","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["NA","NA","NA","NA","NA"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"rau","name":"rau","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["NA","NA","NA","NA","NA"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"peak","name":"peak","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["0.61216891","0.14253077","0.26254676","0.41897072","0.08599782"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"msp","name":"msp","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["0.42810537","0.09339617","0.17877319","0.24067399","0.03255407"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}},{"id":"mau","name":"mau","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["0.42381690","0.10968806","0.23333102","0.23147945","0.04923428"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}}],"defaultPageSize":10,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"acfmfzpofg","dataKey":"f29ed09af34799dda09e63aede89fd1a"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style","tag.attribs.columns.3.style","tag.attribs.columns.4.style","tag.attribs.columns.5.style","tag.attribs.columns.6.style","tag.attribs.columns.7.style","tag.attribs.columns.8.style","tag.attribs.columns.9.style","tag.attribs.columns.10.style","tag.attribs.columns.11.style","tag.attribs.columns.12.style","tag.attribs.columns.13.style","tag.attribs.columns.14.style","tag.attribs.columns.15.style","tag.attribs.columns.16.style","tag.attribs.columns.17.style"],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

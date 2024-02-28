@@ -1,0 +1,95 @@
+---
+title: "Análisis de Fenología con Imágenes HLSS30"
+subtitle: "Comparación entre índices NDVI y kNDVI"
+author: "Francisco Zambrano"
+date: "`r Sys.Date()`"
+lang: "es"
+execute: 
+  echo: false
+format:
+  html:
+    number-sections: true
+    toc: true
+editor: visual
+---
+
+```{r setup, include=FALSE}
+library(sf)
+library(tmap)
+library(terra)
+library(tidyverse)
+library(gt)
+```
+
+## Área de Estudio
+
+```{r message=FALSE}
+sitio <- read_sf('../data/procesada/la_esperanza.gpkg',
+                 layer = "borde_cuartel")
+
+tmap_mode("view")
+
+tm_shape(sitio) +
+  tm_borders(col = 'white') +
+   tmap_options(
+     basemaps = c(Imagery = "Esri.WorldImagery")
+     )
+```
+
+## Datos
+
+Se utilizaron datos de HLS Sentinel-2 MSI Surface Reflectance Daily Global 30 m, nombre corto `HLSS30`. Enttre julio 2022 y junio 2023.
+
+## Análisis con datos HLSS30
+
+Mapas de los índices NDVI y kNDVI agregados a escala mensual para la temporada 2022-2023.
+
+```{r}
+#| out-width: "100%"
+#| fig-width: 12
+knitr::include_graphics('../output/mapa_ndvi_la_esperanza.png')
+knitr::include_graphics('../output/mapa_kndvi_la_esperanza.png')
+```
+
+Determinación de métricas de fenología.
+
+La métricas utilizadas corresponden a las siguientes:
+
+- `sos:` start of season
+- `eos:` end of season
+- `los:` length of season
+- `pop:` position of peak value (maximum)
+- `mgs:` mean growing season value
+- `peak:` peak value (maximum)
+- `msp:` mean spring value
+- `mau:` mean autumn value
+- `rsp:` rate of spring greenup (not all methods)
+- `rau:` rate of autumn senescence rates (not all methods)
+
+Con índice NDVI
+
+```{r}
+knitr::include_graphics('../output/phenology_la_esperanza_NDVI.png')
+```
+
+Con índice kNDVI
+```{r}
+knitr::include_graphics('../output/phenology_la_esperanza_kNDVI.png')
+```
+
+Tabla con valores de métricas obtenidas de la fenología con los dos índices.
+
+```{r}
+metric_ndvi <- read_rds('../data/procesada/la_esperanza_NDVI_pheno_metrics.rds')
+metric_kndvi <- read_rds('../data/procesada/la_esperanza_kNDVI_pheno_metrics.rds')
+
+metrics <- rbind(metric_ndvi,metric_kndvi)
+
+
+metrics |>
+  mutate(index = c('NDVI',rep('kNDVI',4))) |>
+  relocate(index,.before = 'year') |>
+  gt() |>
+  opt_interactive()
+```
+
