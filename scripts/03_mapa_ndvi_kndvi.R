@@ -5,7 +5,7 @@ library(fs)
 library(glue)
 library(tidyverse)
 
-sitio <- 'la_esperanza'
+sitio <- 'rio_claro'
 dir <- glue('/mnt/data_procesada/data/rasters/Proyectos/FONDEF_ID21I10297/HLS_{sitio}')
 
 files <- dir_ls(dir,regexp = 'tif$')
@@ -41,8 +41,17 @@ names(kndvi_mon) <- floor_date(ymd(dates),"1 month") |> unique()
 
 pol <- read_sf(glue('data/procesada/{sitio}.gpkg'),layer = 'borde_cuartel') |> st_transform(32719)
 
-tm_shape(ndvi_mon[[1:11]]) + 
+map_ndvi <- tm_shape(ndvi_mon[[1:11]]) + 
   tm_raster(style = 'cont',palette = 'RdYlGn',title = 'NDVI') +
   tm_shape(pol) +
   tm_borders() +
   tm_facets(nrow=2)
+
+map_kndvi <- tm_shape(kndvi_mon[[1:11]]) + 
+  tm_raster(style = 'cont',palette = 'RdYlGn',title = 'kNDVI') +
+  tm_shape(pol) +
+  tm_borders() +
+  tm_facets(nrow=2)
+
+tmap_save(map_ndvi,glue('output/mapa_ndvi_{sitio}.png'))
+tmap_save(map_kndvi,glue('output/mapa_kndvi_{sitio}.png'))

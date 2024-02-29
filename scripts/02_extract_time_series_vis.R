@@ -25,3 +25,15 @@ lapply(res,rast) -> res2
 dates <- names(res2) |> 
   basename() |> 
   str_extract('[0-9]{4}-[0-9]{2}-[0-9]{2}')
+
+lapply(res2,\(x) global(x,'mean',na.rm = TRUE)) -> o
+
+bind_cols(o) |> 
+  set_names(dates) |> 
+  mutate(index = c('NDVI','kNDVI')) |> 
+  pivot_longer(-index) |> 
+  pivot_wider(names_from  ='index',values_from = 'value') |> 
+  mutate(dates = ymd(dates)) |> 
+  select(-name) |> 
+  select(dates,NDVI,kNDVI) |> 
+  write_rds(glue('data/procesada/{sitio}_ndvi_kndvi.rds'))

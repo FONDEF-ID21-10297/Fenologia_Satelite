@@ -6,15 +6,15 @@ library(glue)
 edl_netrc(username = 'frzambra@gmail.com',password = 'Traplozx12#')
 with_gdalcubes()
 
-sitio <- 'rio_claro'
+sitio <- 'la_esperanza'
 layers <- st_layers(glue('data/procesada/{sitio}.gpkg'))
-pol <- read_sf('data/procesada/la_esperanza.gpkg',layer = 'borde_cuartel')
+pol <- read_sf(glue('data/procesada/{sitio}.gpkg'),layer = 'borde_cuartel')
 
 bb <- st_bbox(pol) |> 
   as.numeric()
 
-inicio <- "2022-07-01"
-fin <- "2023-06-30"
+inicio <- "2022-12-01"
+fin <- "2022-12-30"
 
 items <- stac("https://cmr.earthdata.nasa.gov/stac/LPCLOUD") |> 
   stac_search(collections = "HLSS30.v2.0",
@@ -41,9 +41,10 @@ col <- stac_image_collection(items$features,
 
 cloud_mask <- image_mask("Fmask", values=1)
 
-dir_out <- '/mnt/data_procesada/data/rasters/Proyectos/'
+dir_out <- '/mnt/data_procesada/data/rasters/Proyectos/FONDEF_ID21I10297/'
 
 raster_cube(col, v, mask=cloud_mask) |>
   select_bands(c("B02","B03", "B04","B08")) |>
-  write_tif('{dir_out}/HLS_{sitio}')
+  plot(rgb=3:1)
+  write_tif(glue('{dir_out}/HLS_{sitio}'))
 
