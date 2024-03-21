@@ -31,7 +31,7 @@ dates <- names(res2) |>
 
 m <- month(dates)
 m[1:37] <-m[1:37] -6
-m[38:73] <- m[38:73] +6
+m[38:68] <- m[38:68] +6
 
 ndvi_mon <- tapp(ndvi,m, 'mean',na.rm = TRUE)
 kndvi_mon <- tapp(kndvi,m, 'mean',na.rm = TRUE)
@@ -42,7 +42,7 @@ names(kndvi_mon) <- floor_date(ymd(dates),"1 month") |> unique()
 pol <- read_sf(glue('data/procesada/{sitio}.gpkg'),layer = 'borde_cuartel') |> st_transform(32719)
 
 map_ndvi <- tm_shape(ndvi_mon[[1:11]]) + 
-  tm_raster(style = 'cont',palette = 'RdYlGn',title = 'NDVI') +
+  tm_raster(style = 'cont',palette = 'RdYlGn',title = 'NDVI',midpoint = .3) +
   tm_shape(pol) +
   tm_borders() +
   tm_facets(nrow=2)
